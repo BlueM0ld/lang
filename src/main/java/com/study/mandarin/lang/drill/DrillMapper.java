@@ -1,9 +1,8 @@
-package com.study.mandarin.lang.drill.dto;
+package com.study.mandarin.lang.drill;
 
+import com.study.mandarin.lang.drill.dto.DrillOptionDto;
 import com.study.mandarin.lang.vocab.dto.VocabItemDTO;
-import com.study.mandarin.lang.vocab.model.VocabItem;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface DrillMapper {

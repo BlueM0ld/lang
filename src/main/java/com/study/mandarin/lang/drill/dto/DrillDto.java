@@ -1,6 +1,6 @@
 package com.study.mandarin.lang.drill.dto;
 
-import com.study.mandarin.lang.vocab.dto.VocabItemDTO;
+import com.study.mandarin.lang.drill.DrillQuestionDto;
 import lombok.Builder;
 import lombok.Data;
 import java.util.List;

@@ -1,8 +1,9 @@
 package com.study.mandarin.lang.vocab;
 
-import com.study.mandarin.lang.drill.dto.DrillDto;
-import com.study.mandarin.lang.drill.dto.DrillResultRequest;
-import com.study.mandarin.lang.drill.dto.DrillService;
+
+import com.study.mandarin.lang.drill.DrillService;
+import com.study.mandarin.lang.vocab.dto.AddVocab;
+import com.study.mandarin.lang.vocab.dto.UpdateVocab;
 import com.study.mandarin.lang.vocab.dto.VocabItemDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,24 +15,38 @@ import java.util.List;
 @AllArgsConstructor
 public class VocabController {
     private final VocabService vocabService;
-    private final DrillService drillService;
 
-
-    @GetMapping("/vocab")
+    @GetMapping("/vocab/")
     @ResponseBody
-    public List<VocabItemDTO> getVocab() {
+    public List<VocabItemDTO> getVocab(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false, defaultValue = "false") boolean dueOnly
+    ) {
+        return vocabService.getVocab(search,dueOnly);
+    }
+
+    @GetMapping("/vocab/all")
+    @ResponseBody
+    public List<VocabItemDTO> getAllVocab() {
         return vocabService.getAllVocab();
     }
 
-    @GetMapping("/drill")
+    @PostMapping("/vocab")
     @ResponseBody
-    public List<DrillDto> getDrill(){
-        return drillService.getDrill();
+    public ResponseEntity<String> addVocab(@RequestBody AddVocab req){
+        return vocabService.addVocab(req);
     }
 
-    @PostMapping("/drill")
-    public ResponseEntity<String> postDrillVerification(@RequestBody DrillResultRequest req) {
-        return drillService.postDrillVerification(req);
+    @PutMapping("/vocab/{id}")
+    @ResponseBody
+    public ResponseEntity<String> updateVocab(@RequestBody UpdateVocab req){
+        return vocabService.updateVocab(req);
+    }
+
+    @DeleteMapping("/vocab/{id}")
+    @ResponseBody
+    public ResponseEntity<String> deleteVocab(@PathVariable String id){
+        return vocabService.deleteVocab(id);
     }
 
 }

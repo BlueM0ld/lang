@@ -1,14 +1,17 @@
 package com.study.mandarin.lang.vocab;
 
 
+import com.study.mandarin.lang.exception.VocabItemNotFoundException;
+import com.study.mandarin.lang.vocab.dto.AddVocab;
+import com.study.mandarin.lang.vocab.dto.UpdateVocab;
 import com.study.mandarin.lang.vocab.dto.VocabItemDTO;
 import com.study.mandarin.lang.vocab.model.VocabItem;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -34,10 +37,34 @@ public class VocabService {
     }
 
     public VocabItem getVocabItem(String id){
-        return vocabRepository.findById(id).orElseThrow(()-> new RuntimeException("VocabItem doesn't exist"));
+        return vocabRepository.findById(id).orElseThrow(()-> new VocabItemNotFoundException(id));
     }
+
+    public ResponseEntity<String>  addVocab(AddVocab vocab){
+
+        VocabItem newVocabItem = mapper.addNewVocab(vocab);
+        var savedItem = vocabRepository.save(newVocabItem);
+        return ResponseEntity.ok(savedItem.getId());
+    }
+
+    public ResponseEntity<String>  updateVocab(UpdateVocab vocab){
+        vocabRepository.updateVocab(vocab);
+        return ResponseEntity.ok(vocab.id());
+    }
+
+    public ResponseEntity<String> deleteVocab(String id){
+        vocabRepository.deleteById(id);
+        return ResponseEntity.ok(id);
+    }
+
 
     public void updateConfidenceAndRevisionDate(VocabItem vocabItem, boolean success) {
         vocabRepository.updateConfidence(vocabItem,success);
+    }
+
+    public List<VocabItemDTO> getVocab(String search, boolean dueOnly) {
+        return vocabRepository.findWithFilters(search,dueOnly).stream().map(
+                mapper::vocabItemToVocabItemDTO
+        ).toList();
     }
 }
