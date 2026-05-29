@@ -16,6 +16,7 @@ public interface VocabMapper {
     @Mapping(target = "confidenceScore", expression = "java(0)")
     @Mapping(target = "nextReviewDate", expression = "java(java.time.LocalDate.now())")
     @Mapping(target = "available", expression = "java(true)")
+    @Mapping(target = "streak", expression = "java(0)")
     VocabItem addNewVocab(AddVocab vocab);
 
     default int confidenceScorePercentage(int cScore){

@@ -1,7 +1,6 @@
 package com.study.mandarin.lang.vocab;
 
 import com.study.mandarin.lang.vocab.dto.UpdateVocab;
-import com.study.mandarin.lang.vocab.dto.VocabItemDTO;
 import com.study.mandarin.lang.vocab.model.VocabItem;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
@@ -22,7 +21,6 @@ import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 @RequiredArgsConstructor
 public class CustomVocabRepositoryImpl implements CustomVocabRepository{
 
-
     private final MongoOperations mongoOperations;
 
     @Override
@@ -38,28 +36,6 @@ public class CustomVocabRepositoryImpl implements CustomVocabRepository{
 
         AggregationResults<VocabItem> items = mongoOperations.aggregate(aggregation, "VocabItem", VocabItem.class);
         return items.getMappedResults();
-    }
-
-    @Override
-    public void updateConfidence(VocabItem vocabItem, boolean success) {
-
-        LocalDate newDate = updateNextReviewDate(
-                vocabItem.getNextReviewDate(),
-                success
-        );
-
-        var current = vocabItem.getConfidenceScore();
-        var delta = success? 2 :-2;
-        var  newConfidenceScore = Math.max(0, Math.min(20, current + delta));
-        Query query = new Query(
-                Criteria.where("_id").is(vocabItem.getId())
-        );
-
-        Update update = new Update()
-                .set("confidenceScore", newConfidenceScore)
-                .set("nextReviewDate", newDate);
-
-        mongoOperations.updateFirst(query, update, VocabItem.class);
     }
 
     @Override
@@ -105,18 +81,17 @@ public class CustomVocabRepositoryImpl implements CustomVocabRepository{
         return mongoOperations.find(query, VocabItem.class);
     }
 
+    @Override
+    public void updateScheduling(VocabItem vocabItem, LocalDate nextReviewDate, int newStreak) {
+        Query query = new Query(
+                Criteria.where("_id").is(vocabItem.getId())
+        );
 
-    public LocalDate updateNextReviewDate(LocalDate currentNextReviewDate, boolean success) {
+        Update update = new Update()
+                .set("streak", newStreak)
+                        .set("nextReviewDate", nextReviewDate);
 
-        LocalDate now = LocalDate.now();
-
-        if (success) {
-            return currentNextReviewDate.plusDays(2);
-        } else {
-            LocalDate minus = currentNextReviewDate.minusDays(2);
-            return minus.isBefore(now)
-                    ? now.plusDays(1)
-                    : minus;
-        }
+        mongoOperations.updateFirst(query, update, VocabItem.class);
     }
+
 }

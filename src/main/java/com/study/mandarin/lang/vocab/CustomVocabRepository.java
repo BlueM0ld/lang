@@ -1,18 +1,18 @@
 package com.study.mandarin.lang.vocab;
 
 import com.study.mandarin.lang.vocab.dto.UpdateVocab;
-import com.study.mandarin.lang.vocab.dto.VocabItemDTO;
 import com.study.mandarin.lang.vocab.model.VocabItem;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface CustomVocabRepository {
 
     List<VocabItem> getRandomSample(int size);
 
-    void updateConfidence(VocabItem vocabId, boolean success);
-
     void updateVocab(UpdateVocab vocab);
 
     List<VocabItem> findWithFilters(String search, boolean dueOnly);
+
+    void updateScheduling(VocabItem item, LocalDate nextReviewDate, int newStreak);
 }

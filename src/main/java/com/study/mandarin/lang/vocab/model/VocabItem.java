@@ -22,6 +22,7 @@ public class VocabItem {
     private String pinyin;
     private String meaning;
     private int confidenceScore;
+    private int streak;
     private LocalDate nextReviewDate;
     private boolean available;
 }

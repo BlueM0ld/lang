@@ -1,16 +1,18 @@
-package com.study.mandarin.lang.vocab;
+package com.study.mandarin.lang.vocab.service;
 
 
 import com.study.mandarin.lang.exception.VocabItemNotFoundException;
+import com.study.mandarin.lang.vocab.VocabMapper;
+import com.study.mandarin.lang.vocab.VocabRepository;
 import com.study.mandarin.lang.vocab.dto.AddVocab;
 import com.study.mandarin.lang.vocab.dto.UpdateVocab;
 import com.study.mandarin.lang.vocab.dto.VocabItemDTO;
 import com.study.mandarin.lang.vocab.model.VocabItem;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -19,6 +21,7 @@ import java.util.List;
 public class VocabService {
 
     private final VocabRepository vocabRepository;
+    private final SpacedRepetitionService spacedRepetitionService;
     private final VocabMapper mapper;
 
 
@@ -40,26 +43,29 @@ public class VocabService {
         return vocabRepository.findById(id).orElseThrow(()-> new VocabItemNotFoundException(id));
     }
 
-    public ResponseEntity<String>  addVocab(AddVocab vocab){
+    public String addVocab(AddVocab vocab){
 
         VocabItem newVocabItem = mapper.addNewVocab(vocab);
         var savedItem = vocabRepository.save(newVocabItem);
-        return ResponseEntity.ok(savedItem.getId());
+        return savedItem.getId();
     }
 
-    public ResponseEntity<String>  updateVocab(UpdateVocab vocab){
+    public String updateVocab(UpdateVocab vocab){
         vocabRepository.updateVocab(vocab);
-        return ResponseEntity.ok(vocab.id());
+        return vocab.id();
     }
 
-    public ResponseEntity<String> deleteVocab(String id){
+    public String deleteVocab(String id){
         vocabRepository.deleteById(id);
-        return ResponseEntity.ok(id);
+        return id;
     }
 
 
-    public void updateConfidenceAndRevisionDate(VocabItem vocabItem, boolean success) {
-        vocabRepository.updateConfidence(vocabItem,success);
+    public void recordDrillResult(String id, boolean success) {
+        VocabItem item = getVocabItem(id);
+        LocalDate nextReviewDate = spacedRepetitionService.calculateNextReviewDate(item.getStreak(), success);
+        int newStreak = spacedRepetitionService.calculateNewStreak(item.getStreak(), success);
+        vocabRepository.updateScheduling(item, nextReviewDate, newStreak);
     }
 
     public List<VocabItemDTO> getVocab(String search, boolean dueOnly) {

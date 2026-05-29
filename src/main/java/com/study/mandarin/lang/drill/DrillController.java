@@ -22,7 +22,7 @@ public class DrillController {
 
     @PostMapping("/drill")
     public ResponseEntity<String> postDrillVerification(@RequestBody DrillResultRequest req) {
-        return drillService.postDrillVerification(req);
+        return ResponseEntity.ok(drillService.postDrillVerification(req));
     }
 
 }

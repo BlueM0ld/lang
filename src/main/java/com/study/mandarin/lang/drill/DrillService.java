@@ -3,11 +3,10 @@ package com.study.mandarin.lang.drill;
 import com.study.mandarin.lang.drill.dto.DrillDto;
 import com.study.mandarin.lang.drill.dto.DrillOptionDto;
 import com.study.mandarin.lang.drill.dto.DrillResultRequest;
-import com.study.mandarin.lang.vocab.VocabService;
+import com.study.mandarin.lang.vocab.service.VocabService;
 import com.study.mandarin.lang.vocab.model.VocabItem;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -42,8 +41,11 @@ public class DrillService {
             List<DrillOptionDto> allItems
     ) {
 
-        List<DrillOptionDto> options = allItems.stream()
-                .filter(item -> !item.equals(question))
+        List<DrillOptionDto> shuffled = new ArrayList<>(allItems);
+        Collections.shuffle(shuffled);
+
+        List<DrillOptionDto> options = shuffled.stream()
+                .filter(item -> !item.character().equals(question.character()))
                 .limit(NUMBER_OF_OPTIONS - 1)
                 .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
 
@@ -57,13 +59,13 @@ public class DrillService {
                 .build();
     }
 
-    public ResponseEntity<String> postDrillVerification(DrillResultRequest request) {
+    public String postDrillVerification(DrillResultRequest request) {
         String id = request.vocabItemId();
         boolean success = request.correct();
 
-        VocabItem vocabItem = vocabService.getVocabItem(id);
-        vocabService.updateConfidenceAndRevisionDate(vocabItem, success);
+        vocabService.recordDrillResult(id, success);
 
-        return ResponseEntity.ok(id);
+        return id;
     }
+
 }
