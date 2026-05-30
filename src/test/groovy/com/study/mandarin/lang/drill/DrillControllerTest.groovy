@@ -38,7 +38,7 @@ class DrillControllerTest extends Specification {
         expect:
         mockMvc.perform(post("/drill")
                 .contentType("application/json")
-                .content('{"vocabItemId":"vocab-123","correct":true}'))
+                .content('{"vocabItemId":"vocab-123","qualityOfRecall":true}'))
                 .andExpect(status().isOk())
                 .andExpect(content().string("vocab-id-123"))
     }

@@ -1,5 +1,6 @@
 package com.study.mandarin.lang.vocab;
 
+import com.study.mandarin.lang.vocab.dto.Memory;
 import com.study.mandarin.lang.vocab.dto.UpdateVocab;
 import com.study.mandarin.lang.vocab.model.VocabItem;
 
@@ -14,5 +15,5 @@ public interface CustomVocabRepository {
 
     List<VocabItem> findWithFilters(String search, boolean dueOnly);
 
-    void updateScheduling(VocabItem item, LocalDate nextReviewDate, int newStreak);
+    void updateVocabMemory(String vocabId, Memory updatedMemory, LocalDate nextReviewDate);
 }

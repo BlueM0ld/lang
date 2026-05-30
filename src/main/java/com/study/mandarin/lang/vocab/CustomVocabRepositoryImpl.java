@@ -1,5 +1,6 @@
 package com.study.mandarin.lang.vocab;
 
+import com.study.mandarin.lang.vocab.dto.Memory;
 import com.study.mandarin.lang.vocab.dto.UpdateVocab;
 import com.study.mandarin.lang.vocab.model.VocabItem;
 import lombok.RequiredArgsConstructor;
@@ -51,8 +52,8 @@ public class CustomVocabRepositoryImpl implements CustomVocabRepository{
 
         mongoOperations.updateFirst(query, update, VocabItem.class);
 
-
     }
+
 
     @Override
     public List<VocabItem> findWithFilters(String search, boolean dueOnly) {
@@ -82,14 +83,14 @@ public class CustomVocabRepositoryImpl implements CustomVocabRepository{
     }
 
     @Override
-    public void updateScheduling(VocabItem vocabItem, LocalDate nextReviewDate, int newStreak) {
+    public void updateVocabMemory(String vocabId, Memory updatedMemory, LocalDate nextReviewDate) {
         Query query = new Query(
-                Criteria.where("_id").is(vocabItem.getId())
+                Criteria.where("_id").is(vocabId)
         );
 
         Update update = new Update()
-                .set("streak", newStreak)
-                        .set("nextReviewDate", nextReviewDate);
+                .set("memory", updatedMemory)
+                .set("nextReviewDate", nextReviewDate);
 
         mongoOperations.updateFirst(query, update, VocabItem.class);
     }

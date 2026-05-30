@@ -4,9 +4,7 @@ package com.study.mandarin.lang.vocab.service;
 import com.study.mandarin.lang.exception.VocabItemNotFoundException;
 import com.study.mandarin.lang.vocab.VocabMapper;
 import com.study.mandarin.lang.vocab.VocabRepository;
-import com.study.mandarin.lang.vocab.dto.AddVocab;
-import com.study.mandarin.lang.vocab.dto.UpdateVocab;
-import com.study.mandarin.lang.vocab.dto.VocabItemDTO;
+import com.study.mandarin.lang.vocab.dto.*;
 import com.study.mandarin.lang.vocab.model.VocabItem;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +29,6 @@ public class VocabService {
                                         .stream()
                                         .map(mapper::vocabItemToVocabItemDTO).toList();
         log.info("Count: {}", items.size());
-
         return items;
     }
 
@@ -60,12 +57,16 @@ public class VocabService {
         return id;
     }
 
+    public String recordDrillResult(VocabItemDTO vocab, QualityOfRecall qualityOfRecall) {
+        VocabItem item = vocabRepository
+                .findByCharacterAndMeaning(vocab.character(), vocab.meaning())
+                .orElseThrow(() -> new VocabItemNotFoundException("Vocabulary item not found"));
+        Memory currentMem = item.getMemory();
+        Memory updatedMemory = spacedRepetitionService.calculateUpdatedMemory(currentMem,qualityOfRecall);
 
-    public void recordDrillResult(String id, boolean success) {
-        VocabItem item = getVocabItem(id);
-        LocalDate nextReviewDate = spacedRepetitionService.calculateNextReviewDate(item.getStreak(), success);
-        int newStreak = spacedRepetitionService.calculateNewStreak(item.getStreak(), success);
-        vocabRepository.updateScheduling(item, nextReviewDate, newStreak);
+        LocalDate nextReviewDate = spacedRepetitionService.calculateNextReviewDate(updatedMemory, qualityOfRecall);
+        vocabRepository.updateVocabMemory(item.getId(), updatedMemory, nextReviewDate);
+        return  item.getId();
     }
 
     public List<VocabItemDTO> getVocab(String search, boolean dueOnly) {

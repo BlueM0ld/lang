@@ -25,7 +25,7 @@ public class VocabController {
         return vocabService.getVocab(search,dueOnly);
     }
 
-    @GetMapping("/vocab/all")
+    @GetMapping("/vocab/dictionary")
     @ResponseBody
     public List<VocabItemDTO> getAllVocab() {
         return vocabService.getAllVocab();

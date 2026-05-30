@@ -3,8 +3,8 @@ package com.study.mandarin.lang.drill;
 import com.study.mandarin.lang.drill.dto.DrillDto;
 import com.study.mandarin.lang.drill.dto.DrillOptionDto;
 import com.study.mandarin.lang.drill.dto.DrillResultRequest;
+import com.study.mandarin.lang.vocab.dto.QualityOfRecall;
 import com.study.mandarin.lang.vocab.service.VocabService;
-import com.study.mandarin.lang.vocab.model.VocabItem;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -60,12 +60,10 @@ public class DrillService {
     }
 
     public String postDrillVerification(DrillResultRequest request) {
-        String id = request.vocabItemId();
-        boolean success = request.correct();
+        var vocabItem = request.vocabItem();
+        QualityOfRecall qualityOfRecall = request.qualityOfRecall();
 
-        vocabService.recordDrillResult(id, success);
-
-        return id;
+        return vocabService.recordDrillResult(vocabItem, qualityOfRecall);
     }
 
 }
