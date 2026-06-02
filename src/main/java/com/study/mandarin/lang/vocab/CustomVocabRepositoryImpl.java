@@ -29,7 +29,7 @@ public class CustomVocabRepositoryImpl implements CustomVocabRepository{
         LocalDate now = LocalDate.now();
 
         var aggregation = Aggregation.newAggregation(
-                match(Criteria.where("available").eq(true)
+                match(Criteria.where("available").is(true)
                         .and("nextReviewDate").lte(now)),
                 sort(Sort.Direction.DESC, "nextReviewDate"),
                 sample(size)
@@ -85,7 +85,7 @@ public class CustomVocabRepositoryImpl implements CustomVocabRepository{
     @Override
     public void updateVocabMemory(String vocabId, Memory updatedMemory, LocalDate nextReviewDate) {
         Query query = new Query(
-                Criteria.where("_id").is(vocabId)
+                Criteria.where(vocabId).is(vocabId)
         );
 
         Update update = new Update()

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/api")
 @AllArgsConstructor
 public class VocabController {
     private final VocabService vocabService;
@@ -19,8 +20,8 @@ public class VocabController {
     @GetMapping("/vocab")
     @ResponseBody
     public List<VocabItemDTO> getVocab(
-            @RequestParam(required = false) String search,
-            @RequestParam(required = false, defaultValue = "false") boolean dueOnly
+            @RequestParam(name = "search", required = false) String search,
+            @RequestParam(name = "dueOnly", required = false, defaultValue = "false") boolean dueOnly
     ) {
         return vocabService.getVocab(search,dueOnly);
     }

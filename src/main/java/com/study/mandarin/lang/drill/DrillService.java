@@ -60,10 +60,10 @@ public class DrillService {
     }
 
     public String postDrillVerification(DrillResultRequest request) {
-        var vocabItem = request.vocabItem();
+        var id = request.vocabId();
         QualityOfRecall qualityOfRecall = request.qualityOfRecall();
 
-        return vocabService.recordDrillResult(vocabItem, qualityOfRecall);
+        return vocabService.recordDrillResult(id, qualityOfRecall);
     }
 
 }

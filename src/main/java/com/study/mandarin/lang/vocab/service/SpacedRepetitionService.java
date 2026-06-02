@@ -73,7 +73,7 @@ public class SpacedRepetitionService {
 
 
     /*
-     * How many times we have seen this word, if we have recalled the we increase else we set it to 0
+     * How many times we have seen this word, if we have recalled correctly we increase else we set it to 0
      * why? negation will cause the interval to be less but not the next day. If we fail recall we should
      * review it the next day
      */

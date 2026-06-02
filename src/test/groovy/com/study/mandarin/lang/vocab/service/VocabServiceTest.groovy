@@ -2,7 +2,6 @@ package com.study.mandarin.lang.vocab.service
 
 import com.study.mandarin.lang.exception.VocabItemNotFoundException
 import com.study.mandarin.lang.vocab.VocabMapper
-import com.study.mandarin.lang.vocab.VocabMapperImpl
 import com.study.mandarin.lang.vocab.VocabRepository
 import com.study.mandarin.lang.vocab.dto.AddVocab
 import com.study.mandarin.lang.vocab.dto.Memory
@@ -10,6 +9,7 @@ import com.study.mandarin.lang.vocab.dto.QualityOfRecall
 import com.study.mandarin.lang.vocab.dto.UpdateVocab
 import com.study.mandarin.lang.vocab.dto.VocabItemDTO
 import com.study.mandarin.lang.vocab.model.VocabItem
+import org.mapstruct.factory.Mappers
 import spock.lang.Specification
 
 import java.time.LocalDate
@@ -20,7 +20,7 @@ class VocabServiceTest extends Specification {
     VocabRepository vocabRepository = Mock()
     SpacedRepetitionService spacedRepetitionService = Mock()
 
-    VocabMapper mapper = new VocabMapperImpl()
+    VocabMapper mapper = Mappers.getMapper(VocabMapper)
 
     VocabService service = new VocabService(
             vocabRepository,
@@ -35,7 +35,6 @@ class VocabServiceTest extends Specification {
                 character: "你",
                 pinyin: "nǐ",
                 meaning: "you",
-                confidenceScore: 5
         )
 
         vocabRepository.findAll() >> [vocabItem]
@@ -48,7 +47,6 @@ class VocabServiceTest extends Specification {
         result[0].character() == "你"
         result[0].pinyin() == "nǐ"
         result[0].meaning() == "you"
-        result[0].confidenceScore() == 50  //confidence is a percentage
 
     }
 
@@ -59,7 +57,6 @@ class VocabServiceTest extends Specification {
                 character: "好",
                 pinyin: "hǎo",
                 meaning: "good",
-                confidenceScore: 3
         )
 
         vocabRepository.getRandomSample(5) >> [vocabItem]
@@ -71,7 +68,6 @@ class VocabServiceTest extends Specification {
         result.size() == 1
         result[0].character() == "好"
         result[0].meaning() == "good"
-        result[0].confidenceScore() == 30  //confidence is a percentage
     }
 
     def "should get vocab item by id"() {
@@ -79,7 +75,6 @@ class VocabServiceTest extends Specification {
         def vocabItem = new VocabItem(
                 id: "123",
                 character: "学",
-                confidenceScore: 2
         )
 
         vocabRepository.findById("123") >> Optional.of(vocabItem)
@@ -116,7 +111,6 @@ class VocabServiceTest extends Specification {
                 character: "谢谢",
                 pinyin: "xiè xie",
                 meaning: "thank you",
-                confidenceScore: 0
         )
 
         when:
@@ -170,51 +164,54 @@ class VocabServiceTest extends Specification {
 
     def "should record drill result and persist updated memory"() {
         given:
-        def dto = new VocabItemDTO("你", "nǐ", "you", 1)
+        def dto = new VocabItemDTO("1","你", "nǐ", "you")
 
         def item = new VocabItem(
-                id: "1",
+                id: "232425",
+                vocabId: "1",
                 character: "你",
+                pinyin: "nǐ",
                 meaning: "you",
                 memory: Memory.initial(),
-                confidenceScore: 1
+                nextReviewDate: LocalDate.now(),
+                available: true
         )
 
-        vocabRepository.findByCharacterAndMeaning("你", "you") >>
+        vocabRepository.findByVocabId("1") >>
                 Optional.of(item)
 
-        spacedRepetitionService.calculateUpdatedMemory(_ as Memory, _ as QualityOfRecall) >>
+        spacedRepetitionService.calculateUpdatedMemory(_, _) >>
                 new Memory(1, 2.5, 3)
 
-        spacedRepetitionService.calculateNextReviewDate(_ as Memory, _ as QualityOfRecall) >>
+        spacedRepetitionService.calculateNextReviewDate(_, _) >>
                 LocalDate.now().plusDays(1)
 
         when:
-        service.recordDrillResult(dto, QualityOfRecall.ZERO)
+        service.recordDrillResult("1", QualityOfRecall.ZERO)
 
         then:
         1 * vocabRepository.updateVocabMemory(
                 "1",
-                {it.repetitions==1 && it.easeFactor==2.5 && it.lastInterval==3},
-                { it instanceof LocalDate }
+                { it.repetitions == 1 && it.easeFactor == 2.5 && it.lastInterval == 3 },
+                _ as LocalDate
         )
     }
 
     def "should throw exception when recording drill result for missing vocab"() {
         given:
         def dto = new VocabItemDTO(
+                "1",
                 "你",
                 "nǐ",
-                "you",
-                0
+                "you"
         )
 
 
-        vocabRepository.findByCharacterAndMeaning("你", "you") >>
+        vocabRepository.findByVocabId("1") >>
                 Optional.empty()
 
         when:
-        service.recordDrillResult(dto, QualityOfRecall.ZERO)
+        service.recordDrillResult("1", QualityOfRecall.ZERO)
 
         then:
         thrown(VocabItemNotFoundException)
@@ -226,8 +223,7 @@ class VocabServiceTest extends Specification {
                 id: "1",
                 character: "水",
                 pinyin: "shuǐ",
-                meaning: "water",
-                confidenceScore: 4
+                meaning: "water"
         )
 
         vocabRepository.findWithFilters("water", true) >> [vocabItem]
@@ -239,7 +235,6 @@ class VocabServiceTest extends Specification {
         result.size() == 1
         result[0].character() == "水"
         result[0].meaning() == "water"
-        result[0].confidenceScore() == 40  //confidence is a percentage
 
     }
 

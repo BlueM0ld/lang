@@ -57,15 +57,14 @@ public class VocabService {
         return id;
     }
 
-    public String recordDrillResult(VocabItemDTO vocab, QualityOfRecall qualityOfRecall) {
-        VocabItem item = vocabRepository
-                .findByCharacterAndMeaning(vocab.character(), vocab.meaning())
+    public String recordDrillResult(String vocabId, QualityOfRecall qualityOfRecall) {
+        VocabItem item = vocabRepository.findByVocabId(vocabId)
                 .orElseThrow(() -> new VocabItemNotFoundException("Vocabulary item not found"));
         Memory currentMem = item.getMemory();
         Memory updatedMemory = spacedRepetitionService.calculateUpdatedMemory(currentMem,qualityOfRecall);
 
         LocalDate nextReviewDate = spacedRepetitionService.calculateNextReviewDate(updatedMemory, qualityOfRecall);
-        vocabRepository.updateVocabMemory(item.getId(), updatedMemory, nextReviewDate);
+        vocabRepository.updateVocabMemory(vocabId, updatedMemory, nextReviewDate);
         return  item.getId();
     }
 

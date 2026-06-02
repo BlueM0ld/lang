@@ -13,11 +13,10 @@ import org.mapstruct.MappingTarget;
 @Mapper(componentModel = "spring")
 public interface VocabMapper {
 
-    @Mapping(target = "confidenceScore", expression = "java(confidenceScorePercentage(vocabItem.getConfidenceScore()))")
     VocabItemDTO vocabItemToVocabItemDTO(VocabItem vocabItem);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "confidenceScore", expression = "java(0)")
+    @Mapping(target = "vocabId", expression = "java(java.util.UUID.randomUUID().toString())")
     @Mapping(target = "nextReviewDate", expression = "java(java.time.LocalDate.now())")
     @Mapping(target = "available", expression = "java(true)")
     @Mapping(target = "memory", ignore = true)
@@ -28,7 +27,4 @@ public interface VocabMapper {
         item.setMemory(Memory.initial());
     }
 
-    default int confidenceScorePercentage(int cScore){
-        return (cScore * 100) / 10;
-    }
 }

@@ -22,10 +22,11 @@ public class VocabItem {
 
     @Id
     private String id;
+
+    private String vocabId;
     private String character;
     private String pinyin;
     private String meaning;
-    private int confidenceScore;
     private Memory memory;
     @Indexed
     private LocalDate nextReviewDate;

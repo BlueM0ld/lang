@@ -3,7 +3,7 @@ package com.study.mandarin.lang.drill
 import com.study.mandarin.lang.drill.dto.DrillResultRequest
 import org.spockframework.spring.SpringBean
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.test.web.servlet.MockMvc
 import spock.lang.Specification
 import com.study.mandarin.lang.drill.fixtures.DrillFixtures
@@ -25,7 +25,7 @@ class DrillControllerTest extends Specification {
         drillService.getDrill() >> [DrillFixtures.drillDto()]
 
         expect:
-        mockMvc.perform(get("/drill"))
+        mockMvc.perform(get("/api/drill"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath('$[0].vocabItemOptions').isArray())
     }
@@ -36,9 +36,9 @@ class DrillControllerTest extends Specification {
         drillService.postDrillVerification(_ as DrillResultRequest) >> "vocab-id-123"
 
         expect:
-        mockMvc.perform(post("/drill")
+        mockMvc.perform(post("/api/drill")
                 .contentType("application/json")
-                .content('{"vocabItemId":"vocab-123","qualityOfRecall":true}'))
+                .content('{"vocabId":"vocab-123", "qualityOfRecall": "THREE"}'))
                 .andExpect(status().isOk())
                 .andExpect(content().string("vocab-id-123"))
     }
