@@ -1,5 +1,6 @@
 package com.study.mandarin.lang.vocab.service
 
+import com.study.mandarin.lang.drill.dto.DrillType
 import com.study.mandarin.lang.exception.VocabItemNotFoundException
 import com.study.mandarin.lang.vocab.dto.VocabMemory
 import com.study.mandarin.lang.vocab.persistence.adapter.VocabMapper
@@ -165,7 +166,7 @@ class VocabServiceTest extends Specification {
 
     def "should record drill result and persist updated memory"() {
         given:
-        def memoryModal = "read"
+        def memoryModal = DrillType.READING
         def dto = new VocabItemDTO("1","你", "nǐ", "you")
 
 
@@ -202,7 +203,7 @@ class VocabServiceTest extends Specification {
 
     def "should throw exception when recording drill result for missing vocab"() {
         given:
-        def memoryModal = "read"
+        def memoryModal = DrillType.READING
         def dto = new VocabItemDTO(
                 "1",
                 "你",

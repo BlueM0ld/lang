@@ -35,7 +35,7 @@ class DrillServiceTest extends Specification {
 
     def "postDrillVerification calls vocabService and returns id"() {
         given:
-        def memoryModal = "read"
+        def memoryModal =  DrillType.READING
         VocabItemDTO vocabItemDTO = new VocabItemDTO("id","character","pinyin", "meaning");
         def request = new DrillResultRequest("id",memoryModal, QualityOfRecall.ZERO)
 

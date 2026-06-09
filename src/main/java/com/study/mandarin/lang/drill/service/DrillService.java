@@ -77,10 +77,10 @@ public class DrillService {
 
     public String postDrillVerification(DrillResultRequest request) {
         var id = request.vocabId();
-        String memoryModal = request.modal();
+        DrillType drillType = request.drillType();
         QualityOfRecall qualityOfRecall = request.qualityOfRecall();
 
-        return vocabService.recordDrillResult(id, memoryModal,qualityOfRecall);
+        return vocabService.recordDrillResult(id, drillType,qualityOfRecall);
     }
 
 }

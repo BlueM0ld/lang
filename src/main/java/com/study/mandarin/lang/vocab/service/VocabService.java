@@ -1,6 +1,8 @@
 package com.study.mandarin.lang.vocab.service;
 
 
+import com.study.mandarin.lang.drill.dto.DrillType;
+import com.study.mandarin.lang.exception.UnknownDrillTypeException;
 import com.study.mandarin.lang.exception.VocabItemNotFoundException;
 import com.study.mandarin.lang.vocab.persistence.adapter.VocabMapper;
 import com.study.mandarin.lang.vocab.persistence.VocabRepository;
@@ -57,11 +59,11 @@ public class VocabService {
         return id;
     }
 
-    public String recordDrillResult(String vocabId, String memoryModal, QualityOfRecall qualityOfRecall) {
+    public String recordDrillResult(String vocabId, DrillType drillType, QualityOfRecall qualityOfRecall) {
         VocabItem item = vocabRepository.findByVocabId(vocabId)
                 .orElseThrow(() -> new VocabItemNotFoundException("Vocabulary item not found"));
         VocabMemory vocabMemory= item.getVocabMemory();
-        Memory currentMem = getCurrentMemModal(memoryModal,vocabMemory);
+        Memory currentMem = getCurrentMemModal(drillType,vocabMemory);
         Memory updatedMemory = spacedRepetitionService.calculateUpdatedMemory(currentMem,qualityOfRecall);
 
         LocalDate nextReviewDate = spacedRepetitionService.calculateNextReviewDate(updatedMemory, qualityOfRecall);
@@ -69,16 +71,15 @@ public class VocabService {
         return  item.getId();
     }
 
-    private Memory getCurrentMemModal(String memoryModal, VocabMemory item){
-        return switch (memoryModal) {
-            case "read" -> item.getReading();
-            case "write" -> item.getWriting();
-            case "listen" -> item.getListening();
-            case "speak" -> item.getSpeaking();
-            default -> null;
+    private Memory getCurrentMemModal(DrillType drillType, VocabMemory item) {
+        return switch (drillType) {
+            case RECOGNITION, READING -> item.getReading();
+            case LISTENING, TONE_PAIR, SHADOWING -> item.getListening();
+            case SPEAKING -> item.getSpeaking();
+            case WRITING -> item.getWriting();
+            case FREE_RECALL -> item.getWriting(); // temporary mapping
         };
     }
-
     public List<VocabItemDTO> getVocab(String search, boolean dueOnly) {
         return vocabRepository.findWithFilters(search,dueOnly).stream().map(
                 mapper::vocabItemToVocabItemDTO
