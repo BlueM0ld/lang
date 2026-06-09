@@ -1,5 +1,7 @@
-package com.study.mandarin.lang.drill;
+package com.study.mandarin.lang.drill.service;
 
+import com.study.mandarin.lang.drill.DrillMapper;
+import com.study.mandarin.lang.drill.dto.DrillType;
 import com.study.mandarin.lang.drill.dto.DrillDto;
 import com.study.mandarin.lang.drill.dto.DrillOptionDto;
 import com.study.mandarin.lang.drill.dto.DrillResultRequest;
@@ -25,7 +27,21 @@ public class DrillService {
     private static final int NUMBER_OF_OPTIONS = 5;
     private static final int DRILL_QUESTIONS=5;
 
-    public List<DrillDto> getDrill() {
+    public List<DrillDto> getDrill(DrillType drillType) {
+        switch (drillType){
+            case RECOGNITION -> {
+                return getRecognitionDrill();
+            }
+            case READING -> {
+                return List.of();
+            }
+            default -> throw new UnsupportedOperationException(
+                        "DrillType not yet implemented: " + drillType);
+        }
+    }
+
+
+    public List<DrillDto> getRecognitionDrill() {
 
         List<DrillOptionDto> vocabItems =
                 vocabService.getRandomVocabList(NUMBER_OF_RANDOM_VOCAB).stream().map(drillMapper::toDrillOptionDto).toList();
@@ -61,9 +77,10 @@ public class DrillService {
 
     public String postDrillVerification(DrillResultRequest request) {
         var id = request.vocabId();
+        String memoryModal = request.modal();
         QualityOfRecall qualityOfRecall = request.qualityOfRecall();
 
-        return vocabService.recordDrillResult(id, qualityOfRecall);
+        return vocabService.recordDrillResult(id, memoryModal,qualityOfRecall);
     }
 
 }

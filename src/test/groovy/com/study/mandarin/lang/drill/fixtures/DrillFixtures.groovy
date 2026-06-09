@@ -1,7 +1,8 @@
 package com.study.mandarin.lang.drill.fixtures
 
 import com.study.mandarin.lang.drill.DrillQuestionDto;
-import com.study.mandarin.lang.drill.dto.*;
+import com.study.mandarin.lang.drill.dto.*
+import com.study.mandarin.lang.vocab.dto.QualityOfRecall;
 
 
 public final class DrillFixtures {
@@ -33,7 +34,8 @@ public final class DrillFixtures {
     static DrillResultRequest request(boolean correct=true) {
         return new DrillResultRequest(
                 "vocab-id-123",
-                correct
+                "reading",
+                correct as QualityOfRecall
         );
     }
 }

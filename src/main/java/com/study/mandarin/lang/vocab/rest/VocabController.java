@@ -1,4 +1,4 @@
-package com.study.mandarin.lang.vocab;
+package com.study.mandarin.lang.vocab.rest;
 
 
 import com.study.mandarin.lang.vocab.dto.AddVocab;

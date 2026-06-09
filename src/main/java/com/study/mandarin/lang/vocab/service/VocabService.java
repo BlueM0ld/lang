@@ -2,8 +2,8 @@ package com.study.mandarin.lang.vocab.service;
 
 
 import com.study.mandarin.lang.exception.VocabItemNotFoundException;
-import com.study.mandarin.lang.vocab.VocabMapper;
-import com.study.mandarin.lang.vocab.VocabRepository;
+import com.study.mandarin.lang.vocab.persistence.adapter.VocabMapper;
+import com.study.mandarin.lang.vocab.persistence.VocabRepository;
 import com.study.mandarin.lang.vocab.dto.*;
 import com.study.mandarin.lang.vocab.model.VocabItem;
 import lombok.RequiredArgsConstructor;
@@ -57,15 +57,26 @@ public class VocabService {
         return id;
     }
 
-    public String recordDrillResult(String vocabId, QualityOfRecall qualityOfRecall) {
+    public String recordDrillResult(String vocabId, String memoryModal, QualityOfRecall qualityOfRecall) {
         VocabItem item = vocabRepository.findByVocabId(vocabId)
                 .orElseThrow(() -> new VocabItemNotFoundException("Vocabulary item not found"));
-        Memory currentMem = item.getMemory();
+        VocabMemory vocabMemory= item.getVocabMemory();
+        Memory currentMem = getCurrentMemModal(memoryModal,vocabMemory);
         Memory updatedMemory = spacedRepetitionService.calculateUpdatedMemory(currentMem,qualityOfRecall);
 
         LocalDate nextReviewDate = spacedRepetitionService.calculateNextReviewDate(updatedMemory, qualityOfRecall);
         vocabRepository.updateVocabMemory(vocabId, updatedMemory, nextReviewDate);
         return  item.getId();
+    }
+
+    private Memory getCurrentMemModal(String memoryModal, VocabMemory item){
+        return switch (memoryModal) {
+            case "read" -> item.getReading();
+            case "write" -> item.getWriting();
+            case "listen" -> item.getListening();
+            case "speak" -> item.getSpeaking();
+            default -> null;
+        };
     }
 
     public List<VocabItemDTO> getVocab(String search, boolean dueOnly) {

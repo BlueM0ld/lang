@@ -1,6 +1,7 @@
 package com.study.mandarin.lang.vocab.model;
 
 import com.study.mandarin.lang.vocab.dto.Memory;
+import com.study.mandarin.lang.vocab.dto.VocabMemory;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,7 +28,9 @@ public class VocabItem {
     private String character;
     private String pinyin;
     private String meaning;
-    private Memory memory;
+    private String tonePair;
+    private VocabMemory vocabMemory;
+
     @Indexed
     private LocalDate nextReviewDate;
     // TODO: Controls staged vocabulary introduction.

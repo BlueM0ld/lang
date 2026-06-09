@@ -1,8 +1,9 @@
 package com.study.mandarin.lang.vocab.service
 
 import com.study.mandarin.lang.exception.VocabItemNotFoundException
-import com.study.mandarin.lang.vocab.VocabMapper
-import com.study.mandarin.lang.vocab.VocabRepository
+import com.study.mandarin.lang.vocab.dto.VocabMemory
+import com.study.mandarin.lang.vocab.persistence.adapter.VocabMapper
+import com.study.mandarin.lang.vocab.persistence.VocabRepository
 import com.study.mandarin.lang.vocab.dto.AddVocab
 import com.study.mandarin.lang.vocab.dto.Memory
 import com.study.mandarin.lang.vocab.dto.QualityOfRecall
@@ -164,7 +165,9 @@ class VocabServiceTest extends Specification {
 
     def "should record drill result and persist updated memory"() {
         given:
+        def memoryModal = "read"
         def dto = new VocabItemDTO("1","你", "nǐ", "you")
+
 
         def item = new VocabItem(
                 id: "232425",
@@ -172,7 +175,7 @@ class VocabServiceTest extends Specification {
                 character: "你",
                 pinyin: "nǐ",
                 meaning: "you",
-                memory: Memory.initial(),
+                vocabMemory: VocabMemory.initial(),
                 nextReviewDate: LocalDate.now(),
                 available: true
         )
@@ -187,7 +190,7 @@ class VocabServiceTest extends Specification {
                 LocalDate.now().plusDays(1)
 
         when:
-        service.recordDrillResult("1", QualityOfRecall.ZERO)
+        service.recordDrillResult("1", memoryModal, QualityOfRecall.ZERO)
 
         then:
         1 * vocabRepository.updateVocabMemory(
@@ -199,6 +202,7 @@ class VocabServiceTest extends Specification {
 
     def "should throw exception when recording drill result for missing vocab"() {
         given:
+        def memoryModal = "read"
         def dto = new VocabItemDTO(
                 "1",
                 "你",
@@ -211,7 +215,7 @@ class VocabServiceTest extends Specification {
                 Optional.empty()
 
         when:
-        service.recordDrillResult("1", QualityOfRecall.ZERO)
+        service.recordDrillResult("1", memoryModal, QualityOfRecall.ZERO)
 
         then:
         thrown(VocabItemNotFoundException)

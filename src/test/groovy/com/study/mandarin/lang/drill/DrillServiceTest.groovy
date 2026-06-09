@@ -1,6 +1,7 @@
 package com.study.mandarin.lang.drill
 
 import com.study.mandarin.lang.drill.dto.*
+import com.study.mandarin.lang.drill.service.DrillService
 import com.study.mandarin.lang.vocab.dto.QualityOfRecall
 import com.study.mandarin.lang.vocab.dto.VocabItemDTO
 import com.study.mandarin.lang.vocab.service.VocabService
@@ -21,7 +22,7 @@ class DrillServiceTest extends Specification {
         }
 
         when:
-        def result = service.getDrill()
+        def result = service.getDrill(DrillType.RECOGNITION)
 
         then:
         result.size() == 5
@@ -34,13 +35,14 @@ class DrillServiceTest extends Specification {
 
     def "postDrillVerification calls vocabService and returns id"() {
         given:
+        def memoryModal = "read"
         VocabItemDTO vocabItemDTO = new VocabItemDTO("id","character","pinyin", "meaning");
-        def request = new DrillResultRequest("id", QualityOfRecall.ZERO)
+        def request = new DrillResultRequest("id",memoryModal, QualityOfRecall.ZERO)
 
         when:
         def result = service.postDrillVerification(request)
 
         then:
-        1 * vocabService.recordDrillResult("id", QualityOfRecall.ZERO)
+        1 * vocabService.recordDrillResult("id", memoryModal, QualityOfRecall.ZERO)
     }
 }

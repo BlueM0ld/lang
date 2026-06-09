@@ -1,4 +1,4 @@
-package com.study.mandarin.lang.vocab;
+package com.study.mandarin.lang.vocab.persistence;
 
 import com.study.mandarin.lang.vocab.dto.Memory;
 import com.study.mandarin.lang.vocab.dto.UpdateVocab;
