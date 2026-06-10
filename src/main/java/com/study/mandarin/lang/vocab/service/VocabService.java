@@ -4,6 +4,7 @@ package com.study.mandarin.lang.vocab.service;
 import com.study.mandarin.lang.drill.dto.DrillType;
 import com.study.mandarin.lang.exception.UnknownDrillTypeException;
 import com.study.mandarin.lang.exception.VocabItemNotFoundException;
+import com.study.mandarin.lang.utils.Tone;
 import com.study.mandarin.lang.vocab.persistence.adapter.VocabMapper;
 import com.study.mandarin.lang.vocab.persistence.VocabRepository;
 import com.study.mandarin.lang.vocab.dto.*;
@@ -44,7 +45,8 @@ public class VocabService {
 
     public String addVocab(AddVocab vocab){
 
-        VocabItem newVocabItem = mapper.addNewVocab(vocab);
+        List<Tone> tones = Tone.extractAll(vocab.pinyin());
+        VocabItem newVocabItem = mapper.addNewVocab(vocab, tones);
         var savedItem = vocabRepository.save(newVocabItem);
         return savedItem.getId();
     }
@@ -67,7 +69,12 @@ public class VocabService {
         Memory updatedMemory = spacedRepetitionService.calculateUpdatedMemory(currentMem,qualityOfRecall);
 
         LocalDate nextReviewDate = spacedRepetitionService.calculateNextReviewDate(updatedMemory, qualityOfRecall);
-        vocabRepository.updateVocabMemory(vocabId, updatedMemory, nextReviewDate);
+        vocabRepository.updateVocabMemory(
+                vocabId,
+                updatedMemory,
+                nextReviewDate,
+                drillType
+        );
         return  item.getId();
     }
 

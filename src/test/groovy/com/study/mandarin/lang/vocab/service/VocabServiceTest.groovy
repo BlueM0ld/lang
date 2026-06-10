@@ -2,15 +2,10 @@ package com.study.mandarin.lang.vocab.service
 
 import com.study.mandarin.lang.drill.dto.DrillType
 import com.study.mandarin.lang.exception.VocabItemNotFoundException
-import com.study.mandarin.lang.vocab.dto.VocabMemory
-import com.study.mandarin.lang.vocab.persistence.adapter.VocabMapper
-import com.study.mandarin.lang.vocab.persistence.VocabRepository
-import com.study.mandarin.lang.vocab.dto.AddVocab
-import com.study.mandarin.lang.vocab.dto.Memory
-import com.study.mandarin.lang.vocab.dto.QualityOfRecall
-import com.study.mandarin.lang.vocab.dto.UpdateVocab
-import com.study.mandarin.lang.vocab.dto.VocabItemDTO
+import com.study.mandarin.lang.vocab.dto.*
 import com.study.mandarin.lang.vocab.model.VocabItem
+import com.study.mandarin.lang.vocab.persistence.VocabRepository
+import com.study.mandarin.lang.vocab.persistence.adapter.VocabMapper
 import org.mapstruct.factory.Mappers
 import spock.lang.Specification
 
@@ -166,9 +161,7 @@ class VocabServiceTest extends Specification {
 
     def "should record drill result and persist updated memory"() {
         given:
-        def memoryModal = DrillType.READING
-        def dto = new VocabItemDTO("1","你", "nǐ", "you")
-
+        def drillType = DrillType.READING
 
         def item = new VocabItem(
                 id: "232425",
@@ -191,32 +184,27 @@ class VocabServiceTest extends Specification {
                 LocalDate.now().plusDays(1)
 
         when:
-        service.recordDrillResult("1", memoryModal, QualityOfRecall.ZERO)
+        service.recordDrillResult("1", drillType, QualityOfRecall.ZERO)
 
         then:
         1 * vocabRepository.updateVocabMemory(
                 "1",
-                { it.repetitions == 1 && it.easeFactor == 2.5 && it.lastInterval == 3 },
-                _ as LocalDate
+                { m ->
+                    m.repetitions == 1 &&
+                            m.easeFactor == 2.5 &&
+                            m.lastInterval == 3
+                },
+                _ as LocalDate,
+                drillType
         )
     }
 
     def "should throw exception when recording drill result for missing vocab"() {
         given:
-        def memoryModal = DrillType.READING
-        def dto = new VocabItemDTO(
-                "1",
-                "你",
-                "nǐ",
-                "you"
-        )
-
-
-        vocabRepository.findByVocabId("1") >>
-                Optional.empty()
+        vocabRepository.findByVocabId("1") >> Optional.empty()
 
         when:
-        service.recordDrillResult("1", memoryModal, QualityOfRecall.ZERO)
+        service.recordDrillResult("1", DrillType.READING, QualityOfRecall.ZERO)
 
         then:
         thrown(VocabItemNotFoundException)

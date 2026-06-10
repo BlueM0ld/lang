@@ -1,6 +1,6 @@
 package com.study.mandarin.lang.vocab.model;
 
-import com.study.mandarin.lang.vocab.dto.Memory;
+import com.study.mandarin.lang.utils.Tone;
 import com.study.mandarin.lang.vocab.dto.VocabMemory;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @Document(collection = "VocabItem")
@@ -28,7 +29,7 @@ public class VocabItem {
     private String character;
     private String pinyin;
     private String meaning;
-    private String tonePair;
+    private List<Tone> toneSequence;
     private VocabMemory vocabMemory;
 
     @Indexed

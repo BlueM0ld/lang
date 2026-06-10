@@ -1,5 +1,6 @@
 package com.study.mandarin.lang.vocab.persistence;
 
+import com.study.mandarin.lang.drill.dto.DrillType;
 import com.study.mandarin.lang.vocab.dto.Memory;
 import com.study.mandarin.lang.vocab.dto.UpdateVocab;
 import com.study.mandarin.lang.vocab.model.VocabItem;
@@ -15,5 +16,5 @@ public interface CustomVocabRepository {
 
     List<VocabItem> findWithFilters(String search, boolean dueOnly);
 
-    void updateVocabMemory(String vocabId, Memory updatedMemory, LocalDate nextReviewDate);
+    void updateVocabMemory(String vocabId, Memory updatedMemory, LocalDate nextReviewDate, DrillType drillType);
 }

@@ -1,5 +1,6 @@
 package com.study.mandarin.lang.vocab.persistence;
 
+import com.study.mandarin.lang.drill.dto.DrillType;
 import com.study.mandarin.lang.vocab.dto.Memory;
 import com.study.mandarin.lang.vocab.dto.UpdateVocab;
 import com.study.mandarin.lang.vocab.model.VocabItem;
@@ -82,14 +83,23 @@ public class CustomVocabRepositoryImpl implements CustomVocabRepository{
         return mongoOperations.find(query, VocabItem.class);
     }
 
+
     @Override
-    public void updateVocabMemory(String vocabId, Memory updatedMemory, LocalDate nextReviewDate) {
+    public void updateVocabMemory(String vocabId, Memory updatedMemory, LocalDate nextReviewDate, DrillType drillType) {
+
+        String memoryField = switch (drillType) {
+            case RECOGNITION, READING -> "vocabMemory.reading";
+            case LISTENING, TONE_PAIR, SHADOWING -> "vocabMemory.listening";
+            case SPEAKING -> "vocabMemory.speaking";
+            case WRITING, FREE_RECALL -> "vocabMemory.writing";
+        };
+
         Query query = new Query(
-                Criteria.where(vocabId).is(vocabId)
+                Criteria.where("vocabId").is(vocabId)
         );
 
         Update update = new Update()
-                .set("memory", updatedMemory)
+                .set(memoryField, updatedMemory)
                 .set("nextReviewDate", nextReviewDate);
 
         mongoOperations.updateFirst(query, update, VocabItem.class);
