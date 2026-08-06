@@ -17,10 +17,17 @@ import java.util.List;
 public class DrillController {
     private final DrillService drillService;
 
-
-    @GetMapping("/drill/{drillType}")
+    @GetMapping("/drill")
     @ResponseBody
     public List<DrillDto> getDrill(
+    ) {
+        return drillService.getDrill(DrillType.RECOGNITION);
+    }
+
+    //TODO: wire correctly to UI
+    @GetMapping("/drill/{drillType}")
+    @ResponseBody
+    public List<DrillDto> getDrillMany(
             @PathVariable DrillType drillType
     ) {
         return drillService.getDrill(drillType);

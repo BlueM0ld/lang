@@ -17,6 +17,7 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface VocabMapper {
 
+    @Mapping(target = "audioUrl", defaultValue = "")
     VocabItemDTO vocabItemToVocabItemDTO(VocabItem vocabItem);
 
     @Mapping(target = "id", ignore = true)
@@ -25,6 +26,7 @@ public interface VocabMapper {
     @Mapping(target = "available", expression = "java(true)")
     @Mapping(target = "vocabMemory", ignore = true)
     @Mapping(target = "toneSequence", source = "tones")
+    @Mapping(target = "audioUrl", ignore = true) // TODO: Update when we setup audio
     VocabItem addNewVocab(AddVocab vocab, List<Tone> tones);
 
     @AfterMapping

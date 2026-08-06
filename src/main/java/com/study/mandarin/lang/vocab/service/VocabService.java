@@ -2,7 +2,6 @@ package com.study.mandarin.lang.vocab.service;
 
 
 import com.study.mandarin.lang.drill.dto.DrillType;
-import com.study.mandarin.lang.exception.UnknownDrillTypeException;
 import com.study.mandarin.lang.exception.VocabItemNotFoundException;
 import com.study.mandarin.lang.utils.Tone;
 import com.study.mandarin.lang.vocab.persistence.adapter.VocabMapper;
@@ -23,6 +22,7 @@ public class VocabService {
 
     private final VocabRepository vocabRepository;
     private final SpacedRepetitionService spacedRepetitionService;
+    private final TtsService ttsService;
     private final VocabMapper mapper;
 
 
@@ -47,6 +47,8 @@ public class VocabService {
 
         List<Tone> tones = Tone.extractAll(vocab.pinyin());
         VocabItem newVocabItem = mapper.addNewVocab(vocab, tones);
+        String audio = ttsService.getAudioUrl(vocab.character(),vocab.pinyin());
+        newVocabItem.setAudioUrl(audio);
         var savedItem = vocabRepository.save(newVocabItem);
         return savedItem.getId();
     }

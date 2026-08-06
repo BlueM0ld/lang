@@ -18,7 +18,7 @@ class DrillServiceTest extends Specification {
     def "getDrill returns 5 questions each with 5 options"() {
         given:
         vocabService.getRandomVocabList(10) >> (1..10).collect {
-            new VocabItemDTO("id$it", "char$it", "pin$it", "mean$it")
+            new VocabItemDTO("id$it", "char$it", "pin$it", "mean$it", "audio$it")
         }
 
         when:
@@ -36,7 +36,7 @@ class DrillServiceTest extends Specification {
     def "postDrillVerification calls vocabService and returns id"() {
         given:
         def memoryModal =  DrillType.READING
-        VocabItemDTO vocabItemDTO = new VocabItemDTO("id","character","pinyin", "meaning");
+        VocabItemDTO vocabItemDTO = new VocabItemDTO("id","character","pinyin", "meaning", "audio");
         def request = new DrillResultRequest("id",memoryModal, QualityOfRecall.ZERO)
 
         when:

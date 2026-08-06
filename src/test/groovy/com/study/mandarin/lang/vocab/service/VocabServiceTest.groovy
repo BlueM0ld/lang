@@ -16,12 +16,14 @@ class VocabServiceTest extends Specification {
 
     VocabRepository vocabRepository = Mock()
     SpacedRepetitionService spacedRepetitionService = Mock()
+    TtsService ttsService = Mock()
 
     VocabMapper mapper = Mappers.getMapper(VocabMapper)
 
     VocabService service = new VocabService(
             vocabRepository,
             spacedRepetitionService,
+            ttsService,
             mapper
     )
 

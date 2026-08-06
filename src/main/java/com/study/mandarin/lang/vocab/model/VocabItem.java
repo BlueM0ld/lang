@@ -31,6 +31,7 @@ public class VocabItem {
     private String meaning;
     private List<Tone> toneSequence;
     private VocabMemory vocabMemory;
+    private String audioUrl;
 
     @Indexed
     private LocalDate nextReviewDate;
