@@ -1,6 +1,5 @@
 package com.study.mandarin.lang.drill.rest;
 
-import com.study.mandarin.lang.drill.dto.DrillModalType;
 import com.study.mandarin.lang.drill.service.DrillService;
 import com.study.mandarin.lang.drill.dto.DrillType;
 import com.study.mandarin.lang.drill.dto.DrillDto;

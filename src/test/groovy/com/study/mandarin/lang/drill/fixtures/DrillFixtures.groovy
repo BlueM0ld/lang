@@ -1,23 +1,27 @@
 package com.study.mandarin.lang.drill.fixtures
 
-import com.study.mandarin.lang.drill.DrillQuestionDto;
+
 import com.study.mandarin.lang.drill.dto.*
-import com.study.mandarin.lang.vocab.dto.QualityOfRecall;
+import com.study.mandarin.lang.drill.dto.options.DrillOption
+import com.study.mandarin.lang.drill.dto.options.RecognitionOption
+import com.study.mandarin.lang.drill.dto.questions.DrillQuestion
+import com.study.mandarin.lang.drill.dto.questions.RecognitionQuestion
+import com.study.mandarin.lang.vocab.dto.QualityOfRecall
 
 
-public final class DrillFixtures {
+final class DrillFixtures {
 
     private DrillFixtures() {}
 
-    static DrillQuestionDto question() {
-        return new DrillQuestionDto(
+    static DrillQuestion question() {
+        return new RecognitionQuestion(
                 "你",
                 "nǐ"
         );
     }
 
-    static DrillOptionDto option() {
-        return new DrillOptionDto(
+    static DrillOption option() {
+        return new RecognitionOption(
                 "你",
                 "nǐ",
                 "you"
@@ -34,7 +38,7 @@ public final class DrillFixtures {
     static DrillResultRequest request(boolean correct=true) {
         return new DrillResultRequest(
                 "vocab-id-123",
-                "reading",
+                DrillType.READING,
                 correct as QualityOfRecall
         );
     }

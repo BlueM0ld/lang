@@ -5,7 +5,6 @@ import com.study.mandarin.lang.vocab.dto.AddVocab;
 import com.study.mandarin.lang.vocab.dto.VocabItemDTO;
 import com.study.mandarin.lang.vocab.dto.VocabMemory;
 import com.study.mandarin.lang.vocab.model.VocabItem;
-import com.study.mandarin.lang.vocab.dto.Memory;
 
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;

@@ -1,6 +1,7 @@
 package com.study.mandarin.lang.drill.dto;
 
-import com.study.mandarin.lang.drill.DrillQuestionDto;
+import com.study.mandarin.lang.drill.dto.options.DrillOption;
+import com.study.mandarin.lang.drill.dto.questions.DrillQuestion;
 import lombok.Builder;
 import lombok.Data;
 import java.util.List;
@@ -8,6 +9,6 @@ import java.util.List;
 @Builder
 @Data
 public class DrillDto {
-    DrillQuestionDto vocabQuestion;
-    List<DrillOptionDto> vocabItemOptions;
+    DrillQuestion vocabQuestion;
+    List<DrillOption> vocabItemOptions;
 }

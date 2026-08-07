@@ -3,8 +3,9 @@ package com.study.mandarin.lang.drill.service;
 import com.study.mandarin.lang.drill.DrillMapper;
 import com.study.mandarin.lang.drill.dto.DrillType;
 import com.study.mandarin.lang.drill.dto.DrillDto;
-import com.study.mandarin.lang.drill.dto.DrillOptionDto;
 import com.study.mandarin.lang.drill.dto.DrillResultRequest;
+import com.study.mandarin.lang.drill.dto.options.DrillOption;
+import com.study.mandarin.lang.drill.dto.options.RecognitionOption;
 import com.study.mandarin.lang.vocab.dto.QualityOfRecall;
 import com.study.mandarin.lang.vocab.service.VocabService;
 import lombok.RequiredArgsConstructor;
@@ -29,22 +30,21 @@ public class DrillService {
 
     public List<DrillDto> getDrill(DrillType drillType) {
         switch (drillType){
+            case FREE_RECALL, READING, LISTENING, SHADOWING, SPEAKING, TONE_PAIR, WRITING -> {
+                return  List.of();
+            }
             case RECOGNITION -> {
                 return getRecognitionDrill();
             }
-            case READING -> {
-                return List.of();
-            }
-            default -> throw new UnsupportedOperationException(
-                        "DrillType not yet implemented: " + drillType);
         }
+        return List.of();
     }
 
 
     public List<DrillDto> getRecognitionDrill() {
 
-        List<DrillOptionDto> vocabItems =
-                vocabService.getRandomVocabList(NUMBER_OF_RANDOM_VOCAB).stream().map(drillMapper::toDrillOptionDto).toList();
+        List<RecognitionOption> vocabItems =
+                vocabService.getRandomVocabList(NUMBER_OF_RANDOM_VOCAB).stream().map(drillMapper::toRecognitionOption).toList();
 
         return vocabItems.stream()
                 .map(question -> createDrill(question, vocabItems))
@@ -53,14 +53,14 @@ public class DrillService {
     }
 
     private DrillDto createDrill(
-            DrillOptionDto question,
-            List<DrillOptionDto> allItems
+            RecognitionOption question,
+            List<RecognitionOption> allItems
     ) {
 
-        List<DrillOptionDto> shuffled = new ArrayList<>(allItems);
+        List<RecognitionOption> shuffled = new ArrayList<>(allItems);
         Collections.shuffle(shuffled);
 
-        List<DrillOptionDto> options = shuffled.stream()
+        List<DrillOption> options = shuffled.stream()
                 .filter(item -> !item.character().equals(question.character()))
                 .limit(NUMBER_OF_OPTIONS - 1)
                 .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
@@ -70,7 +70,7 @@ public class DrillService {
         Collections.shuffle(options);
 
         return DrillDto.builder()
-                .vocabQuestion(drillMapper.toDrillQuestionDto(question))
+                .vocabQuestion(drillMapper.toDrillQuestion(question))
                 .vocabItemOptions(options)
                 .build();
     }
