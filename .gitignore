@@ -1,0 +1,49 @@
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Gradle wrapper
+!gradle/wrapper/gradle-wrapper.properties
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# Compiled Java files
+*.class
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment/config files
+.env
+.env.*
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+
+# Java crash logs
+hs_err_pid*
+
+# Build artifacts
+*.jar
+*.war
+*.ear
+
+# Keep Gradle wrapper files tracked
+!gradlew
+!gradlew.bat
+!gradle/wrapper/
+
+/bin
